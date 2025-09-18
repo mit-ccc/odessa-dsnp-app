@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "379030256012",
+    "project_id": "odessa-app-4984a",
+    "storage_bucket": "odessa-app-4984a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379030256012:android:7d399d91e39bc6df833ea9",
+        "android_client_info": {
+          "package_name": "com.odessaapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8GZwKNlP3B0XoiVND_FDOFHlOMdOw56E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

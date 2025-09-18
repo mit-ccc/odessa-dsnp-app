@@ -1,0 +1,9 @@
+export const PRIMARY_THEME_COLOR = "#4F29B7"; //'#4C3FBF';
+export const SECONDARY_THEME_COLOR = "#ffffff";
+export const TERTIARY_THEME_COLOR = "#3E5C40";
+export const QUATERNARY_THEME_COLOR = "#a3fea6";
+export const QUINARY_THEME_COLOR = "#926aff";
+export const HEADING_THEME_COLOR = "rgb(254, 183, 43)";
+export const MAX_NUMBER_PROMPTS_ARCHIVE_PAGE = 10;
+export const BODY_FONT = "SpaceMono-Regular";
+export const BODY_FONT_BOLD = "SpaceMono-Bold";

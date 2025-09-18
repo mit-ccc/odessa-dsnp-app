@@ -1,0 +1,4 @@
+10/11/23 - 
+    $ we decide to structure by feature rather than quickstart components/screens/etc in order to modularize and make it more scalable. Additionally, it should be easy for people to work on different things simultaneously, and plug & play.
+    $ major vs minor component rather than importing feature from feature. still a bit clunky. Maybe features shouldn't be organized around the screens, but that's another layer ... 
+        or we could make both the archive and landing the same feature, and make two screens. But then it is weird having it be the home screen. 

@@ -1,0 +1,34 @@
+[
+    {
+        "question": "Odessa?",
+        "answer": "Oh, a DEcentralized Social Systems App!"
+    },
+    {
+        "question": "What is Odessa?",
+        "answer": "Odessa allows communities to push daily prompts to members, who can then respond via audio notes. At the end of the day, members can listen to all the replies. But you can't hear the replies if you didn't participate!"
+    },
+    {
+        "question": "Please explain personas to me.",
+        "answer": "A persona is a set information like a profile picture, name, and bio. Right now you can only have one persona, but we will expand that early 2024. At that point, you'll be able to use different personas with different communities."
+    },
+    {
+        "question": "What is a prompt? What is QOTD?",
+        "answer": "Every day a community gets prompted with a Question Of The Day (QOTD), which is currently randomly selected among all the available prompts submitted by community members. You can have up to three prompts in stock! The more you have the more likely it is that your community will engage with your prompt as their QOTD."
+    },
+    {
+        "question": "How do I respond to a QOTD?",
+        "answer": "Go to the Daily tab in the bottom navigation bar. If a QOTD is active you'll be able to press the + button and add your answer! Note that while in the future each community may allow multiple answers per persona per QOTD, right now you are limited to one answer. Share away!"
+    },
+    {
+        "question": "What is the master phrase?",
+        "answer": "Odessa uses a login method that is different than the normal user+password account system. Here, you have a secret phrase that is a long list of words that is both a unique user ID plus password rolled into one. Keep this safe! You should copy the phrase and store it somewhere secure, such as 1pw (best), a Google Doc, or a sheet of paper. This master phrase generates a set of crytographic keys commonly used with decentralized technologies, including social networks and cryptocurrencies."
+    },
+    {
+        "question": "Known bugs",
+        "answer": "We are already tracking a series of bugs in this release – if your is not listed here, we welcome and encourage your feedback: i) Profile picture is currently constrained to specific image types, ii) back button from recorder in iOS is not clickable."
+    },
+    {
+        "question": "Where do I submit bugs?",
+        "answer": "Email or Slack Belén or Matt."
+    }
+]

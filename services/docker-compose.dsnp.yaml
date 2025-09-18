@@ -1,0 +1,132 @@
+x-common-environment: &common-environment
+  FREQUENCY_API_WS_URL: ${FREQUENCY_API_WS_URL}
+  SIWF_NODE_RPC_URL: ${SIWF_NODE_RPC_URL}
+  FREQUENCY_URL: ${FREQUENCY_URL}
+  FREQUENCY_HTTP_URL: ${FREQUENCY_HTTP_URL}
+  REDIS_URL: "redis://redis:6379"
+  PROVIDER_ID: ${PROVIDER_ID}
+  PROVIDER_ACCOUNT_SEED_PHRASE: ${PROVIDER_ACCOUNT_SEED_PHRASE}
+  WEBHOOK_FAILURE_THRESHOLD: 3
+  WEBHOOK_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_MAX_RETRIES: 4
+  HEALTH_CHECK_MAX_RETRY_INTERVAL_SECONDS: 10
+  HEALTH_CHECK_SUCCESS_THRESHOLD: 10
+  CAPACITY_LIMIT: '{"type":"percentage", "value":80}'
+  SIWF_URL: "https://projectlibertylabs.github.io/siwf/ui"
+  SIWF_DOMAIN: "localhost"
+  QUEUE_HIGH_WATER: 1000
+  CHAIN_ENVIRONMENT: dev
+  DEBUG: true
+
+x-graph-service-env: &graph-service-env
+  DEBOUNCE_SECONDS: 10
+  GRAPH_ENVIRONMENT_TYPE: Mainnet
+  RECONNECTION_SERVICE_REQUIRED: false
+  CACHE_KEY_PREFIX: "graph:"
+  AT_REST_ENCRYPTION_KEY_SEED: "odessa-dsnp very secret key"
+
+x-account-service-env: &account-service-env
+  GRAPH_ENVIRONMENT_TYPE: Mainnet
+  BLOCKCHAIN_SCAN_INTERVAL_SECONDS: 1
+  TRUST_UNFINALIZED_BLOCKS: true
+  WEBHOOK_BASE_URL: "http://odessa-dsnp:3001/webhooks/account-service" # Replace with URL to our app
+  CACHE_KEY_PREFIX: "account:"
+  SIWF_V2_DOMAIN: "login"
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - ${SERVICE_PORT_7}:6379
+    networks:
+      - odessa-dsnp
+    volumes:
+      - redis_data:/data/redis
+
+  frequency:
+    image: dsnp/instant-seal-node-with-deployed-schemas:latest
+    # We need to specify the platform because it's the only image
+    # built by Frequency at the moment, and auto-pull won't work otherwise
+    platform: linux/amd64
+    # Uncomment SEALING_MODE and SEALING_INTERVAL if you want to use interval sealing.
+    # Other options you may want to add depending on your test scenario.
+    environment:
+      - SEALING_MODE=interval
+      - SEALING_INTERVAL=1
+    command: --offchain-worker=always --enable-offchain-indexing=true
+    ports:
+      - 9944:9944
+    networks:
+      - odessa-dsnp
+    volumes:
+      - chainstorage:/data
+    profiles:
+      - frequency-node
+
+  graph-service-api:
+    image: projectlibertylabs/graph-service:1.2.1-alpha
+    platform: linux/amd64
+    pull_policy: always
+    ports:
+      - ${SERVICE_PORT_2}:3000
+    environment:
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: graph-api
+    depends_on:
+      - redis
+    networks:
+      - odessa-dsnp
+    profiles:
+      - dsnp-gateway
+
+  graph-service-worker:
+    image: projectlibertylabs/graph-service:1.2.1-alpha
+    platform: linux/amd64
+    pull_policy: always
+    environment:
+      <<: [*common-environment, *graph-service-env]
+      START_PROCESS: graph-worker
+    depends_on:
+      - redis
+    networks:
+      - odessa-dsnp
+    profiles:
+      - dsnp-gateway
+
+  account-service-api:
+    image: projectlibertylabs/account-service:1.2.1-alpha
+    platform: linux/amd64
+    pull_policy: always
+    ports:
+      - ${SERVICE_PORT_3}:3000
+    command: account-api
+    environment:
+      <<: [*common-environment, *account-service-env]
+    depends_on:
+      - redis
+    networks:
+      - odessa-dsnp
+    profiles:
+      - dsnp-gateway
+
+  account-service-worker:
+    image: projectlibertylabs/account-service:1.2.1-alpha
+    platform: linux/amd64
+    pull_policy: always
+    environment:
+      <<: [*common-environment, *account-service-env]
+    command: account-worker
+    depends_on:
+      - redis
+    networks:
+      - odessa-dsnp
+    profiles:
+      - dsnp-gateway
+
+volumes:
+  redis_data:
+  chainstorage:
+    external: false
+
+networks:
+  odessa-dsnp:

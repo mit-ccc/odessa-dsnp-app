@@ -1,0 +1,90 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+          # This is important to fetch the changes to the previous commit
+          fetch-depth: 0
+
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          # This part is also where you can pass other options, for example:
+          prettier_options: --check OdessaApp/src
+          only_changed: True
+          dry: True
+
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+          # This is important to fetch the changes to the previous commit
+          fetch-depth: 0
+
+      - name: Create .env file
+        run: |
+          touch .env
+          echo ALLOW_NOTIFICATIONS="false" >> .env
+          echo NOTIFICATIONS_ALIAS="notif-gh-ci" >> .env
+          echo AUDIO_ASSET_PATH="/assets/dev/ci/audio" >> .env
+          echo IMAGE_ASSET_PATH="/assets/dev/ci/image" >> .env
+          echo DB_CONNECTION_STRING="admin:supersecret@localhost:5432/odessa" >> .env
+
+      - name: Venv setup
+        run: |
+          cd services
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Docker setup
+        run: |
+          cd services/db
+          docker compose up -d --wait
+
+      - name: Firebase credential setup
+        env:
+          # Firebase json saved as GitHub Secret, must be copied over
+          FIREBASE_CREDS: ${{ secrets.FIREBASE_CREDENTIALS}}
+          CREDS_FILENAME: credentials/odessa-app-4984a-firebase-adminsdk-rhi9t-02d5b81bb0.json
+        run: |
+          cd services
+          mkdir credentials/
+          echo $FIREBASE_CREDS > $CREDS_FILENAME
+
+      - name: DB setup
+        run: |
+          cd services
+          source venv/bin/activate
+          cd db
+          alembic upgrade head
+          cd ../tasks
+          invoke seed-dev-data
+
+      - name: Run tests
+        run: |
+          cd services
+          source venv/bin/activate
+          chmod +x ./api/tests/run_all
+          ./api/tests/run_all

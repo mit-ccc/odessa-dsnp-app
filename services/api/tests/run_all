@@ -1,0 +1,12 @@
+# from services/
+# bash api/tests/run_all -vvv
+# $1 : verbosity of unittest
+
+for i in api/tests/*.py; do
+    [ -f "$i" ] || break
+    if [[ $i != api/tests/__init__.py ]];
+    then
+        echo $'\n\n>>>' python3 -m unittest $i $1;
+        python3 -m unittest $i $1;
+    fi
+done

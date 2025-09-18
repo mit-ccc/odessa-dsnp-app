@@ -1,0 +1,29 @@
+alembic
+ariadne
+invoke
+psycopg2-binary
+uvicorn
+sqlalchemy
+ariadne[file-uploads]
+boto3
+six
+mutagen
+pillow
+schedule
+mangum
+python-dotenv
+arrow
+firebase-admin
+sqlalchemy-utils
+pycryptodome
+ecdsa
+
+# 2023-10-17: fastapi depends on a version of pydantic that causes an
+# import error. We'll fix the versions we need, but this should be
+# loosened in the future when FastAPI has fully completed the pydantic
+# v2 migration.
+fastapi==0.103.2
+pydantic<2.4
+assemblyai
+openai==1.12.0
+substrate-interface~=1.7.9

@@ -1,0 +1,15 @@
+
+# Outline of Setup, with Common Pitfalls
+1) Clone the repo
+2) Install node for your os
+3) go to the subdirectory (OdessaApp) with package.json, and run (npm i)
+4) download android studio giraffe
+5) open android studio, download the correct pixel (Pixel 5, API 33, Android 13.0) via more actions -> Virtual Device Manager -> Create Device
+6) in OdessaApp, run (npx react-native doctor), you need checkmarks next to Adb and JDK <br> 6a) If no JDK, you must set the $JAVA_HOME variable. This will be something like /Applications/Android Studio.app/Contents/jbr/Contents/Home (jbr=jetbrains) <br> 6b) if no Adb, you must set the $ANDROID_HOME variable. This will be something like /Users/_username/Library/Android/sdk
+7) from OdessaApp, run (npm start). You should see the image and rdia options, press a to run on android <br> 7a) might take a while for first time. If you get the error crypto.getRnadomValues must be defined, go to Storage.js and comment out the lines that use the package. We tried a fix in android/build.gradle, but doesn't seem to work for MacOS
+8) get python system wide, and set up virtual env. It will just make a folder. Name it venv, it is the standard, and is already included in .gitignore 
+9) do the pip-tools install, pip-compile, pip-sync for startup, and any time you add a dependency
+10) if having trouble with the postgres and psql installation (mac) then you should just brew install postgres
+11) install docker if you haven't, then compose up and invoke the seed data, run uvicorn (in the services directory) and try to insert using psql 
+11.a) remember semicolons
+12) try to query and insert using graphQL -- access using the localhost address from when you started the server 

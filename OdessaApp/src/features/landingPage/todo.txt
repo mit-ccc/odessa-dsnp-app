@@ -1,0 +1,10 @@
+
+- properly getting the time so not just loading, might be resolved by the above. 
+- alignment issues 
+- the posts are on going underneath the question closes before getting to bottom of page 
+- use the actual user and community 
+^ those should be ordered pretty well 
+
+Not in this feature: 
+- join community 
+- move all the coloring to primary/secondary where relevant 

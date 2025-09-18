@@ -1,0 +1,9 @@
+venv/
+cache/
+__pycache/
+*.pyc
+build/
+.env
+.env.production
+credentials/
+.python-version

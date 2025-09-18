@@ -1,0 +1,307 @@
+type Query {
+  ping: String!
+  siwfURI: String!
+  siwfMsaId(control_key: String): SiwfMsaId
+  communities(
+    start: Int
+    limit: Int
+    my: Boolean
+    access: String
+    bridges: Boolean
+  ): [Community]!
+  personas(start: Int, limit: Int, pkh: String): [Persona]!
+  posts(start: Int, limit: Int): [Post]!
+  prompts(start: Int, limit: Int): [Prompt]!
+  rounds(
+    how_many: Int
+    status: String
+    prompt_id: Int
+    community_id: Int
+  ): [Round]!
+  community(id: Int): Community!
+  round(id: Int): Round!
+  post(id: Int): Post!
+  audio(id: Int): Audio!
+  image(id: Int, w: Int, h: Int): Image!
+  debugPassword: String!
+  promptReplies(prompt_id: Int!, first: Int, after: Int): PostConnection!
+  personaCanPost(pkh: String!, round_id: Int!): Boolean
+  personaCanPlayRound(pkh: String!, round_id: Int!): Boolean
+  personaRoundActions(pkh: String!, round_id: Int!): PersonaActions
+  personaRoleInCommunity(pkh: String!, community_id: Int!): [String]!
+  personaCommunityPermissions(
+    pkh: String!
+    community_id: Int!
+  ): PersonaPermissions
+  personaPermissions(pkh: String!): PersonaPermissions
+  getAllCommunityPerms(community_id: Int!): [String]!
+  getCommunityDisputes(community_id: Int!): [Dispute]!
+  getPersonaDisputes(community_id: Int!): [Dispute]!
+  dispute(id: Int): Dispute!
+}
+
+type Mutation {
+  siwfLogin(auth_code: String!): SiwfLoginResponse
+  createPersona(
+    name: String!
+    bio: String!
+    pkh: String!
+    msa_id: String
+  ): Persona!
+  updatePersona(pkh: String!, name: String!, bio: String!): Persona
+  updateProfilePicture(pkh: String!, image_id: Int!): Persona
+  removeProfilePicture(pkh: String!): Persona
+  removePersonaPrompt(pkh: String!, prompt_id: Int!): Prompt
+  createPost(
+    text: String!
+    audio_id: Int!
+    community_id: Int!
+    foraConv_id: Int
+    in_reply_to: Int
+  ): Post
+  createPrompt(
+    text: String!
+    community_id: Int!
+    author_id: Int!
+    foraConv_id: Int
+    in_reply_to: Int
+  ): Prompt
+  createBridgedPrompt(
+    pkh: String!
+    text: String!
+    community_ids: [Int!]
+    author_id: Int!
+  ): Prompt
+  createRound(
+    start_time: String
+    completion_time: String
+    end_time: String
+  ): Round
+  uploadUserAudio(audio_file: Upload!): Audio!
+  uploadUserImage(image_file: Upload!): Image!
+  joinPublicCommunity(community_id: Int!): String
+  forceNextRound(community_id: Int, duration: Duration): Round
+  forceCloseActiveRound(community_id: Int): Round
+  registerPkhToCommunity(
+    pkh: String!
+    community_id: Int!
+    mode: String!
+  ): String
+  registerRoleInCommunity(
+    pkh: String!
+    community_id: Int!
+    role: String!
+    mode: String!
+  ): String
+  registerPermInCommunity(
+    pkh: String!
+    community_id: Int!
+    perm: String!
+    mode: String!
+  ): String
+  registeFlagInCommunity(
+    community_id: Int!
+    flag: String!
+    mode: String!
+  ): String
+  addFCMToken(token: String!): Boolean
+  personaCreateCommunity(
+    pkh: String!
+    name: String!
+    description: String!
+    members_desc: String!
+    metadata: String!
+  ): Int!
+  personaUpdatesCommunity(
+    community_id: Int!
+    name: String
+    description: String
+    members_desc: String
+    metadata: String
+  ): Community
+  forceModCheckPosts(community_id: Int): String
+
+  personaDisputePost(post_id: Int!, comment: String, community_id: Int): Int
+  updateModReview(review_id: Int!, metadata: String!): String!
+}
+
+type SiwfMsaId {
+  msaId: String
+}
+
+type SiwfLoginResponse {
+  success: Boolean!
+  msaId: String
+  exists: Boolean
+  controlKey: String
+}
+
+type Behaviors {
+  encourage: String
+  discourage: String
+  ban: String
+}
+
+scalar Upload
+
+input Duration {
+  hours: Int
+  minutes: Int
+  seconds: Int
+}
+
+type PersonaActions {
+  can_post_to: Boolean
+  can_play_round: Boolean
+}
+
+type PersonaPermissions {
+  roles: [String]
+  groups: [String]
+  permissions: [String]
+}
+
+type Community {
+  id: Int!
+  name: String!
+  description: String!
+  members_desc: String!
+  members: [Persona]!
+  active_prompt: Prompt
+  active_round: Round
+  behaviors: Behaviors
+  flags: [String]
+  bridges: [Community]
+  bridge_ids: [Int]!
+  bridge_id: Int
+}
+
+type Persona {
+  id: Int!
+  name: String!
+  bio: String!
+  pkh: String!
+  communities: [Community]!
+  image_id: Int
+  image: Image
+  prompts: [Prompt]
+  posts: [Post]
+  available_communities: [Community]!
+  known_by_requester: Boolean
+  msa_handle: String
+}
+
+type Post {
+  id: Int!
+  text: String!
+  audio_id: Int
+  community_id: Int!
+  author_id: Int!
+  author: Persona!
+  foraConv_id: Int
+  in_reply_to: Int
+  creation_time: String! # Change this to match the expected output format
+  audio: Audio
+  is_prompt: Boolean!
+  prompt: Prompt
+  round: Round!
+  ai_mod_output: String
+  processing_status: String!
+  author_pending_disputes: [Dispute]
+  moderator_pending_disputes: [Dispute]
+  display_lenses: String!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type PostEdge {
+  cursor: String!
+  node: Post!
+}
+
+type PostConnection {
+  edges: [PostEdge]
+  pageInfo: PageInfo!
+}
+
+type Prompt {
+  id: Int!
+  post_id: Int!
+  priority: Int
+  status: String!
+  replies(first: Int, after: Int): PostConnection
+  num_replies: Int!
+  post: Post!
+  author: Persona!
+  round: Round!
+}
+
+type Round {
+  id: Int!
+  prompt_id: Int!
+  creation_time: String!
+  start_time: String
+  end_time: String
+  completion_time: String
+  community_id: Int!
+  prompt: Prompt!
+  status: String!
+  recording_constraint: RecondingConstraint!
+}
+
+type RecondingConstraint {
+  length: Int!
+  alert_length: Int!
+}
+
+type VTT {
+  start: Float
+  end: Float
+  text: String
+}
+
+type Audio {
+  id: Int!
+  public_url: String!
+  info: String
+  duration: Float
+  creation_time: String!
+  wave_values: [Float]
+  transcripts: [VTT]
+  plain_transcript: String
+}
+
+type Image {
+  id: Int
+  public_url: String
+  description: String
+  creation_time: String
+  w: Int
+  h: Int
+}
+
+type Review {
+  id: Int
+  status: String!
+  metadata: String!
+  creation_time: String
+  reviewer_id: Int
+  note_by_reviewer: String
+  action: String
+  reviewer: Persona
+}
+
+type Dispute {
+  id: Int
+  post: Post!
+  disputer: Persona!
+  status: String!
+  metadata: String!
+  reviews: [Review]
+  creation_time: String
+  resolved_time: String
+  note_by_disputer: String
+}
