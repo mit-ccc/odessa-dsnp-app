@@ -4,6 +4,8 @@
 
 Oh, a DEcentralized Social Systems App!
 
+Odessa is a mobile application that makes use of the [decentralized social network protocol](https://dsnp.org/) (DSNP) and the Frequency blockchain.
+
 ## Development
 
 Odessa is a React Native app which uses GraphQL to talk to a Python
